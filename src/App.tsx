@@ -3,6 +3,7 @@ import Home from "./pages/home/home";
 import Layout from "./shared/layout/layout";
 import TutorsPage from "./pages/tutors/tutorsPage";
 import SubjectsPage from './pages/subjects/subjectsPage';
+import LogsPage from './pages/logs/logsPage';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/tutors" element={<TutorsPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
+          <Route path="/logs" element={<LogsPage />} />
         </Routes>
       </Layout>
     </Router>
