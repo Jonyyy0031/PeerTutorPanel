@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
           <SidebarLink link="" icon={Home} text="Inicio"/>
           <SidebarLink link="tutors" icon={Users} text="Tutores" />
           <SidebarLink link="subjects" icon={BookOpen} text="Materias" />
-          <SidebarLink link="" icon={ClipboardList} text="Registros" />
+          <SidebarLink link="logs" icon={ClipboardList} text="Registros" />
         </nav>
       </aside>
     </Fragment>
