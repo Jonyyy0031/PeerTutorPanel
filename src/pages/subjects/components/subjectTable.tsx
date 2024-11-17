@@ -1,58 +1,26 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useMemo } from "react";
 import { Book, MoreVertical, Search, Filter } from "lucide-react";
-import { useSearch } from "../../../shared/hooks/useSearch";
-import { Subject } from "../../../shared/models/subject";
-import Pagination from "../../../shared/components/pagination";
-import { usePagination } from "../../../shared/hooks/usePagination";
 
-const registrosMock: Subject[] = [
-  {
-    id_subject: 1,
-    name: "Mathematics",
-    department: "Science",
-  },
-  {
-    id_subject: 2,
-    name: "History",
-    department: "Arts",
-  },
-  {
-    id_subject: 3,
-    name: "Biology",
-    department: "Science",
-  },
-  {
-    id_subject: 4,
-    name: "Literature",
-    department: "Arts",
-  },
-  {
-    id_subject: 5,
-    name: "Physics",
-    department: "Science",
-  },
-  {
-    id_subject: 6,
-    name: "Physics",
-    department: "Science",
-  },
-  {
-    id_subject: 7,
-    name: "Physics",
-    department: "Science",
-  },
-  {
-    id_subject: 8,
-    name: "Physics",
-    department: "Science",
-  },
-];
+import Pagination from "../../../shared/components/pagination";
+
+import { Subject } from "../../../shared/models/subject.types";
+
+import { usePagination } from "../../../shared/hooks/usePagination";
+import { useSearch } from "../../../shared/hooks/useSearch";
+import TableSkeleton from "../../../shared/components/TableSkeleton";
 
 const ITEMS_PER_PAGE: number = 5;
 
-const SubjectTable: React.FC = () => {
+interface SubjectTableProps {
+  subjects: Subject[];
+  isLoading?: boolean;
+}
+
+
+const SubjectTable: React.FC<SubjectTableProps> = ({ subjects, isLoading }) => {
+  console.log(isLoading);
   const { searchTerm, filteredItems, handleSearch } = useSearch({
-    items: registrosMock,
+    items: subjects,
     searchableFields: ["name", "department"],
   });
 
@@ -106,28 +74,36 @@ const SubjectTable: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedItems.map((subject: Subject) => (
-              <tr key={subject.id_subject}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Book className="h-5 w-5 text-gray-400" />
-                    <span className="ml-2 text-sm font-medium text-gray-900">
-                      {subject.name}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-gray-900">
-                    {subject.department}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-primary-600 hover:text-primary-900">
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
+            {isLoading ? (
+              <tr>
+                <td colSpan={4}>
+                  <TableSkeleton />
                 </td>
               </tr>
-            ))}
+            ) : (
+              paginatedItems.map((subject: Subject) => (
+                <tr key={subject.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <Book className="h-5 w-5 text-gray-400" />
+                      <span className="ml-2 text-sm font-medium text-gray-900">
+                        {subject.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">
+                      {subject.department}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button className="text-primary-600 hover:text-primary-900">
+                      <MoreVertical className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

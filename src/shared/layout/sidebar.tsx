@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Fragment } from "react";
 import { Home, Users, BookOpen, ClipboardList } from "lucide-react";
 import logoUni from "../../assets/LogoPoli.svg";
@@ -7,10 +7,11 @@ type SidebarLinkProps = {
   icon: React.ElementType;
   text: string;
   link: string;
-  active?: boolean;
 };
 
-function SidebarLink({ icon: Icon, text, link, active }: SidebarLinkProps) {
+function SidebarLink({ icon: Icon, text, link }: SidebarLinkProps) {
+  const location = useLocation();
+  const active = location.pathname === `/${link.toLowerCase()}`;
   return (
     <Link
       to={`/${link.toLowerCase()}`}
