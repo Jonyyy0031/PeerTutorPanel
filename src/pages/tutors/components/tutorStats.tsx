@@ -14,11 +14,6 @@ const TutorStats: React.FC = () => {
         value={85}
         description="Tutores con asignaciones actuales"
       />
-      <CardStat
-        title="Horas Asignadas"
-        value={85}
-        description="Total de horas este semestre"
-      />
     </div>
   );
 }

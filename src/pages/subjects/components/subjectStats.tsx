@@ -9,6 +9,7 @@ interface SubjectStatsProps {
 const SubjectStats: React.FC<SubjectStatsProps> = ({ subjects } ) => {
 
     const total = subjects.length;
+    const totalActive = subjects.filter(subject => subject.status === 'active').length;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -19,7 +20,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ subjects } ) => {
       />
       <CardStat
         title="Materias Activas"
-        value={13}
+        value={totalActive}
         description="Materias disponibles para asignar a un tutor"
       />
     </div>

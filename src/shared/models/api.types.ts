@@ -1,3 +1,7 @@
+export interface BaseEntity {
+    id: number;
+}
+
 export interface ApiResponse<T> {
     data: T;
     status: number;
@@ -8,8 +12,4 @@ export interface UseApiState<T> {
     data: T | null;
     loading: boolean;
     error: Error | null;
-}
-
-export interface BaseEntity {
-    id: number | string;
 }
