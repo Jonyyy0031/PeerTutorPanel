@@ -3,37 +3,37 @@ import { X, AlertTriangle } from "lucide-react";
 
 import LoadingSpinner from "../../../../shared/components/LoadingSpinner";
 
-import { Subject } from '../../../../shared/models/subject.types';
+import { Tutor } from "../../../../shared/models/tutor.types";
 
-
-
-interface DeleteSubjectProps {
-  subject : Subject;
-  onDelete: (subject: Subject) => Promise<void>;
+interface DeleteTutorModalProps {
+  tutor: Tutor;
+  isLoading?: boolean;
+  onDelete: (tutor: Tutor) => void;
   onClose: () => void;
-  loading: boolean | undefined;
 }
 
-const DeleteSubjectModal: React.FC<DeleteSubjectProps> = ({ subject, onClose, onDelete, loading  }) => {
-
-
-    const handleDelete = async () => {
-      onDelete(subject);
-    };
-
+const DeleteTutorModal: React.FC<DeleteTutorModalProps> = ({
+  tutor,
+  onClose,
+  onDelete,
+  isLoading,
+}) => {
+  const handleDelete = async () => {
+    onDelete(tutor);
+  };
 
   return (
     <Fragment>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
           <div className="flex justify-between items-center p-6 border-b">
-            <h2 className="text-xl font-semibold text-text-dark">
-              Eliminar Materia
+            <h2 className="text-xl font-semibold text-gray-900">
+              Eliminar Tutor
             </h2>
             <button
               onClick={onClose}
-              disabled={loading}
-              className="text-text-light hover:text-text-dark disabled:opacity-50"
+              disabled={isLoading}
+              className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
             >
               <X size={24} />
             </button>
@@ -46,30 +46,31 @@ const DeleteSubjectModal: React.FC<DeleteSubjectProps> = ({ subject, onClose, on
               </div>
             </div>
 
-            <p className="text-center text-text-dark mb-4">
-              ¿Estás seguro que deseas eliminar la materia{" "}
-              <strong>{subject?.name}</strong>?
+            <p className="text-center text-gray-900 mb-4">
+              ¿Estás seguro que deseas eliminar al tutor{" "}
+              <strong>{tutor.name}</strong>?
             </p>
 
-            <p className="text-center text-text-light text-sm mb-6">
-              Esta acción no se puede deshacer.
+            <p className="text-center text-gray-500 text-sm mb-6">
+              Esta acción no se puede deshacer y eliminará todos los registros
+              asociados a este tutor.
             </p>
 
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
                 onClick={onClose}
-                disabled={loading}
-                className="px-4 py-2 text-text-light hover:text-text-dark transition-colors disabled:opacity-50"
+                disabled={isLoading}
+                className="px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors disabled:opacity-50"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleDelete}
-                disabled={loading}
+                disabled={isLoading}
                 className="flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 min-w-[120px]"
               >
-                {loading ? (
+                {isLoading ? (
                   <>
                     <LoadingSpinner size="sm" className="text-white" />
                     <span>Eliminando...</span>
@@ -86,4 +87,4 @@ const DeleteSubjectModal: React.FC<DeleteSubjectProps> = ({ subject, onClose, on
   );
 };
 
-export default DeleteSubjectModal;
+export default DeleteTutorModal;

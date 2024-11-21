@@ -11,24 +11,25 @@ import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import { useApi } from "../../shared/hooks/useApi";
 import { ApiService } from "../../services/api.services";
 
-
 const subjectsPage: React.FC = () => {
-
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api"),
     []
   );
-  const { fetchAll, create, update, remove, list, loading } = useApi<Subject>(apiService, "/subjects");
+  const { fetchAll, create, update, remove, list, loading } = useApi<Subject>(
+    apiService,
+    "/subjects"
+  );
 
-  useEffect(() => {;
+  useEffect(() => {
     fetchAll();
   }, [fetchAll]);
 
   const handleCreate = async (subject: Partial<Subject>) => {
-      await create(subject);
-      setIsCreateModalOpen(false);
+    await create(subject);
+    setIsCreateModalOpen(false);
   };
 
   const handleEdit = async (subject: Subject) => {
@@ -38,7 +39,6 @@ const subjectsPage: React.FC = () => {
   const handleDelete = async (subject: Subject) => {
     await remove(subject.id);
   };
-
 
   return (
     <Fragment>
@@ -61,14 +61,19 @@ const subjectsPage: React.FC = () => {
         <SubjectStats subjects={list} />
 
         <div className="bg-background-card rounded-xl shadow-sm p-6">
-          <SubjectTable subjects={list} isLoading={loading} onEdit={handleEdit} onDelete={handleDelete} />
-          {isCreateModalOpen && (
-          <CreateSubjectModal
-            onClose={() => setIsCreateModalOpen(false)}
-            onCreate={handleCreate}
+          <SubjectTable
+            subjects={list}
             isLoading={loading}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
-        )}
+          {isCreateModalOpen && (
+            <CreateSubjectModal
+              onClose={() => setIsCreateModalOpen(false)}
+              onCreate={handleCreate}
+              isLoading={loading}
+            />
+          )}
         </div>
       </div>
     </Fragment>

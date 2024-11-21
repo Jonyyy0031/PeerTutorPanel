@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState } from "react";
+import { X } from "lucide-react";
 
-import { Subject } from '../../../../shared/models/subject.types';
+import { Subject } from "../../../../shared/models/subject.types";
 
-import LoadingSpinner from '../../../../shared/components/LoadingSpinner';
-
-
+import LoadingSpinner from "../../../../shared/components/LoadingSpinner";
 
 interface CreateSubjectModalProps {
   onCreate: (subject: Partial<Subject>) => Promise<void>;
@@ -13,25 +11,29 @@ interface CreateSubjectModalProps {
   isLoading: boolean;
 }
 
-const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({ onCreate, onClose, isLoading }) => {
-
-const [formData, setFormData] = useState({
-    name: '',
-    department: '',
-    status: 'active' as 'active' | 'inactive',
+const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
+  onCreate,
+  onClose,
+  isLoading,
+}) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    department: "",
+    status: "active" as "active" | "inactive",
   });
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-      onCreate(formData);
+    onCreate(formData);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold text-text-dark">Nueva Materia</h2>
+          <h2 className="text-xl font-semibold text-text-dark">
+            Nueva Materia
+          </h2>
           <button
             onClick={onClose}
             disabled={isLoading}
@@ -50,7 +52,9 @@ const [formData, setFormData] = useState({
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-primary-600 focus:border-transpartent focus-visible:outline-none "
                 required
                 disabled={isLoading}
@@ -63,7 +67,9 @@ const [formData, setFormData] = useState({
               </label>
               <input
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 className="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-primary-600 focus:border-transparent focus-visible:outline-none"
                 required
                 disabled={isLoading}
@@ -76,7 +82,12 @@ const [formData, setFormData] = useState({
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    status: e.target.value as "active" | "inactive",
+                  })
+                }
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus:border-transparent focus-visible:outline-none"
                 required
                 disabled={isLoading}
