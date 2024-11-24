@@ -1,5 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { Mail, Phone, Filter, Search, Pencil, Trash2, ChevronDown } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Filter,
+  Search,
+  Pencil,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 
@@ -11,6 +19,8 @@ import { useSearch } from "../../../shared/hooks/useSearch";
 import { usePagination } from "../../../shared/hooks/usePagination";
 import EditTutorModal from "./modals/editTutor";
 import DeleteTutorModal from "./modals/deleteTutor";
+import { EmptyState } from "../../../shared/components/empty";
+import { useNotificationContext } from "../../../shared/context/notificationContext";
 
 interface TutorTableProps {
   tutors: Tutor[];
@@ -30,6 +40,8 @@ const TutorTable: React.FC<TutorTableProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
+
+  const {showNotification} = useNotificationContext();
 
   const { searchTerm, filteredItems, handleSearch } = useSearch({
     items: tutors,
@@ -53,14 +65,29 @@ const TutorTable: React.FC<TutorTableProps> = ({
   };
 
   const handleEdit = async (tutor: Tutor) => {
-    await onEdit(tutor);
-    setIsEditModalOpen(false);
+    try {
+      await onEdit(tutor);
+      setIsEditModalOpen(false);
+      showNotification("success", "Tutor actualizado correctamente");
+    } catch (error: any) {
+      showNotification("error", error.message);
+
+    }
   };
 
   const handleDelete = async (tutor: Tutor) => {
-    await onDelete(tutor);
-    setIsDeleteModalOpen(false);
+    try {
+      await onDelete(tutor);
+      setIsDeleteModalOpen(false);
+      showNotification("success", "Tutor eliminado correctamente");
+    } catch (error: any) {
+      showNotification("error", error.message);
+    }
   };
+
+  if (tutors.length === 0 && !isLoading) {
+    return <EmptyState title="Tutores" message="No hay tutores disponibles" />;
+  }
 
   return (
     <Fragment>
@@ -118,7 +145,10 @@ const TutorTable: React.FC<TutorTableProps> = ({
                 </tr>
               ) : (
                 paginatedItems.map((tutor) => (
-                  <tr key={tutor.id} className="group hover:bg-gray-50/50 transition-colors duration-200">
+                  <tr
+                    key={tutor.id}
+                    className="group hover:bg-gray-50/50 transition-colors duration-200"
+                  >
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">
                         {tutor.name}
@@ -189,7 +219,10 @@ const TutorTable: React.FC<TutorTableProps> = ({
                           disabled={isLoading}
                         >
                           {isLoading ? (
-                            <LoadingSpinner size="sm" className="text-primary-600" />
+                            <LoadingSpinner
+                              size="sm"
+                              className="text-primary-600"
+                            />
                           ) : (
                             <Pencil className="h-4 w-4" />
                           )}
@@ -203,7 +236,10 @@ const TutorTable: React.FC<TutorTableProps> = ({
                           disabled={isLoading}
                         >
                           {isLoading ? (
-                            <LoadingSpinner size="sm" className="text-red-600" />
+                            <LoadingSpinner
+                              size="sm"
+                              className="text-red-600"
+                            />
                           ) : (
                             <Trash2 className="h-4 w-4" />
                           )}

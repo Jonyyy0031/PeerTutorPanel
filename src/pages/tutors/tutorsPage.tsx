@@ -11,9 +11,12 @@ import { useApi } from "../../shared/hooks/useApi";
 import { ApiService } from "../../services/api.services";
 
 import CreateTutorModal from "./components/modals/createTutor";
+import { useNotificationContext } from "../../shared/context/notificationContext";
 
 const TutorsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const { showNotification } = useNotificationContext();
 
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api"),
@@ -30,8 +33,13 @@ const TutorsPage: React.FC = () => {
   }, [fetchAll]);
 
   const handleCreate = async (tutor: Partial<Tutor>) => {
-    await create(tutor);
-    setIsCreateModalOpen(false);
+    try {
+      await create(tutor);
+      setIsCreateModalOpen(false);
+      showNotification("success", "Tutor creado correctamente");
+    } catch (error: any) {
+      showNotification("error", error.message);
+    }
   };
   const handleEdit = async (tutor: Tutor) => {
     // @ts-ignore

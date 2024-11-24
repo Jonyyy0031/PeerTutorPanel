@@ -1,6 +1,7 @@
 import React from "react";
-import { CardStat } from "../../../shared/components/cardStats";
+import { Card } from "../../../shared/components/card";
 import { Subject } from "../../../shared/models/subject.types";
+import { Activity, BookOpen } from "lucide-react";
 
 interface SubjectStatsProps {
   subjects: Subject[];
@@ -14,15 +15,17 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ subjects }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <CardStat
+      <Card
         title="Total de Materias"
         value={total}
         description="Materias registradas"
+        icon={BookOpen}
       />
-      <CardStat
+      <Card
         title="Materias Activas"
         value={totalActive}
         description="Materias disponibles para asignar a un tutor"
+        icon={Activity}
       />
     </div>
   );

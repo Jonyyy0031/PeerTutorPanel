@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 
 import { Subject } from "../../../../shared/models/subject.types";
-
 import LoadingSpinner from "../../../../shared/components/LoadingSpinner";
+import FormField from "../../../../shared/components/formField";
+import {
+  validateDepartment,
+  validateNameWithNumbers,
+} from "../../../../shared/helpers/validators";
 
 interface EditSubjectModalProps {
   subject: Subject;
@@ -25,6 +29,29 @@ const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
     onEdit(formData);
   };
 
+  const [errors, setErrors] = useState({
+    name: "",
+    department: "",
+    status: "",
+  });
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData({ ...formData, name: value });
+    setErrors({
+      ...errors,
+      name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
+    });
+  };
+  const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData({ ...formData, department: value });
+    setErrors({
+      ...errors,
+      department: validateDepartment(value) ? "" : "Departamento inválido",
+    });
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
@@ -43,37 +70,20 @@ const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-text-light mb-1">
-                Nombre de la Materia
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-text-light mb-1">
-                Departamento
-              </label>
-              <input
-                value={formData.department}
-                onChange={(e) =>
-                  setFormData({ ...formData, department: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
+            <FormField
+              label="Nombre de la Materia"
+              value={formData.name}
+              onChange={handleNameChange}
+              disabled={isLoading}
+              error={errors.name}
+            />
+            <FormField
+              label="Departamento"
+              value={formData.department}
+              onChange={handleDepartmentChange}
+              disabled={isLoading}
+              error={errors.department}
+            />
             <div>
               <label className="block text-sm font-medium text-text-light mb-1">
                 Estado

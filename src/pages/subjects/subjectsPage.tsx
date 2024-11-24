@@ -10,9 +10,11 @@ import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 import { useApi } from "../../shared/hooks/useApi";
 import { ApiService } from "../../services/api.services";
+import { useNotificationContext } from "../../shared/context/notificationContext";
 
 const subjectsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { showNotification } = useNotificationContext();
 
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api"),
@@ -28,8 +30,13 @@ const subjectsPage: React.FC = () => {
   }, [fetchAll]);
 
   const handleCreate = async (subject: Partial<Subject>) => {
-    await create(subject);
-    setIsCreateModalOpen(false);
+    try {
+      await create(subject);
+      setIsCreateModalOpen(false);
+      showNotification("success", "Se ha creado el materia con éxito");
+    } catch (error: any) {
+      showNotification("error", error.message);
+    }
   };
 
   const handleEdit = async (subject: Subject) => {
@@ -67,6 +74,7 @@ const subjectsPage: React.FC = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
+
           {isCreateModalOpen && (
             <CreateSubjectModal
               onClose={() => setIsCreateModalOpen(false)}

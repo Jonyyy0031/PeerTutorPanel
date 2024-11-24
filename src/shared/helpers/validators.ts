@@ -13,7 +13,7 @@ const validateName = (name: string): boolean => {
     return re.test(name);
 }
 
-const validateNameSubject = (name: string): boolean => {
+const validateNameWithNumbers = (name: string): boolean => {
     const re = /^[a-zA-Z0-9\s]+$/;
     return re.test(name);
 }
@@ -23,4 +23,4 @@ const validateDepartment = (department: string): boolean => {
     return re.test(department);
 }
 
-export { validateEmail, validatePhone, validateName, validateNameSubject, validateDepartment };
+export { validateEmail, validatePhone, validateName, validateNameWithNumbers, validateDepartment };

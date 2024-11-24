@@ -23,11 +23,8 @@ export class ApiService {
 
   async getAll<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T[]>> {
     try {
-      const response = await this.api.get<T[]>(url, config);
-      return {
-        data: response.data,
-        status: response.status,
-      };
+      const response = await this.api.get<ApiResponse<T[]>>(url, config);
+      return response.data;
     } catch (error: any) {
       throw this.handleError(error);
     }
@@ -35,11 +32,8 @@ export class ApiService {
 
   async getById<T>(url: string, id: number | string): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.get<T>(`${url}/${id}`);
-      return {
-        data: response.data,
-        status: response.status,
-      };
+      const response = await this.api.get<ApiResponse<T>>(`${url}/${id}`);
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -47,11 +41,8 @@ export class ApiService {
 
   async create<T>(url: string, data: Partial<T>): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.post<T>(url, data);
-      return {
-        data: response.data,
-        status: response.status,
-      };
+      const response = await this.api.post<ApiResponse<T>>(url, data);
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -63,11 +54,8 @@ export class ApiService {
     data: Partial<T>
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.put<T>(`${url}/${id}`, data);
-      return {
-        data: response.data,
-        status: response.status,
-      };
+      const response = await this.api.put<ApiResponse<T>>(`${url}/${id}`, data);
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -75,11 +63,8 @@ export class ApiService {
 
   async delete(url: string, id: number | string): Promise<ApiResponse<void>> {
     try {
-      const response = await this.api.delete(`${url}/${id}`);
-      return {
-        data: response.data,
-        status: response.status,
-      };
+      const response = await this.api.delete<ApiResponse<void>>(`${url}/${id}`);
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -87,11 +72,20 @@ export class ApiService {
 
   private handleError(error: any): Error {
     if (error.response) {
-      return new Error(error.response.data.message || 'Error del servidor');
+      const { status, data } = error.response;
+
+      const apiError = new Error(data.message || 'Error del servidor');
+      (apiError as any).status = status;
+      (apiError as any).code = data.code;
+      (apiError as any).details = data.details;
+
+      return apiError;
     }
+
     if (error.request) {
-      return new Error('Error de red');
+      return new Error('Error de conexión. Por favor, verifica tu conexión a internet.');
     }
-    return new Error('Error desconocido');
+
+    return new Error('Ha ocurrido un error inesperado.');
   }
 }

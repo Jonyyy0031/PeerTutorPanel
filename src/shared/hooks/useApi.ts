@@ -154,7 +154,6 @@ export function useApi<T extends BaseEntity>(apiService: ApiService, baseUrl: st
                         error: null,
                         success: { ...prev.success, update: true }
                     }));
-                    console.log(response.data);
                     resolve(response.data);
                 }, 1000);
             });

@@ -18,6 +18,6 @@ const LogsPage: React.FC = () => {
       </div>
     </Fragment>
   );
-}
+};
 
 export default LogsPage;

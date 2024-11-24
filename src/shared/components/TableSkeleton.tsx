@@ -5,7 +5,7 @@ interface TableSkeletonProps {
   columns?: number;
 }
 
-const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows = 5, columns = 4 }) => {
+const TableSkeleton: React.FC<TableSkeletonProps> = ({ rows = 4, columns = 4 }) => {
   return (
     <div className="animate-pulse">
       {[...Array(rows)].map((_, rowIndex) => (

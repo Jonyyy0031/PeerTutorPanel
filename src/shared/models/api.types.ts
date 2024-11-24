@@ -3,9 +3,10 @@ export interface BaseEntity {
 }
 
 export interface ApiResponse<T> {
-    data: T;
     status: number;
-    message?: string;
+    code: string;
+    message: string;
+    data: T;
 }
 
 export interface UseApiState<T> {

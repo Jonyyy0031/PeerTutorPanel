@@ -16,7 +16,7 @@ import {
 import { ApiService } from "../../../../services/api.services";
 import { useApi } from "../../../../shared/hooks/useApi";
 import { Subject } from "../../../../shared/models/subject.types";
-
+import FormField from "../../../../shared/components/formField";
 
 interface EditTutorModalProps {
   tutor: Tutor;
@@ -51,7 +51,7 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
     []
   );
 
-  const { fetchAll, list } = useApi<Subject>(apiService, "/subjects");
+  const { fetchAll, list, loading } = useApi<Subject>(apiService, "/subjects");
 
   useEffect(() => {
     fetchAll();
@@ -67,7 +67,10 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
   }, [list]);
 
   const handleSubjectsChange = (
-    selectedOptions: MultiValue<{ value: number | undefined; label: string | undefined }>
+    selectedOptions: MultiValue<{
+      value: number | undefined;
+      label: string | undefined;
+    }>
   ) => {
     setFormData({
       ...formData,
@@ -141,16 +144,14 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
       return;
     }
 
-    const {selectedSubjects, subjectIds, ...tutorData} = formData
+    const { selectedSubjects, subjectIds, ...tutorData } = formData;
 
     const body = {
       tutorData: {
         ...tutorData,
       },
-      subjectIds: subjectIds ,
-    }
-    console.log(body);
-
+      subjectIds: subjectIds,
+    };
     // @ts-ignore
     onEdit(body);
   };
@@ -171,73 +172,34 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre Completo
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={handleNameChange}
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-              {errors.name && (
-                <p className="mt-2 text-sm text-red-600">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Departamento
-              </label>
-              <input
-                value={formData.department}
-                onChange={handleDepartmentChange}
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-              {errors.department && (
-                <p className="mt-2 text-sm text-red-600">{errors.department}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={handleEmailChange}
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teléfono
-              </label>
-              <input
-                type="text"
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                placeholder="XXX-XXX-XXXX"
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-              {errors.phone && (
-                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
-              )}
-            </div>
+            <FormField
+              label="Nombre Completo"
+              value={formData.name}
+              onChange={handleNameChange}
+              disabled={isLoading}
+              error={errors.name}
+            />
+            <FormField
+              label="Departamento"
+              value={formData.department}
+              onChange={handleDepartmentChange}
+              disabled={isLoading}
+              error={errors.department}
+            />
+            <FormField
+              label="Correo Electrónico"
+              value={formData.email}
+              onChange={handleEmailChange}
+              disabled={isLoading}
+              error={errors.email}
+            />
+            <FormField
+              label="Teléfono"
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              disabled={isLoading}
+              error={errors.phone}
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -248,11 +210,16 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
                 name="subjects"
                 options={options}
                 defaultValue={formData.selectedSubjects}
-                onChange={(selectedOptions) => handleSubjectsChange(selectedOptions)}
-                isDisabled={isLoading}
+                onChange={(selectedOptions) =>
+                  handleSubjectsChange(selectedOptions)
+                }
+                isDisabled={isLoading || loading}
                 className="mt-1"
                 classNamePrefix="select"
-                placeholder="Seleccione las materias..."
+                loadingMessage={() => "Cargando..."}
+                placeholder={
+                  loading ? "Cargando..." : "Seleccione las materias..."
+                }
                 components={makeAnimated()}
                 closeMenuOnSelect={false}
                 theme={(theme) => ({

@@ -19,6 +19,8 @@ import { usePagination } from "../../../shared/hooks/usePagination";
 
 import EditSubjectModal from "./modals/editSubject";
 import DeleteSubjectModal from "./modals/deleteSubject";
+import { useNotificationContext } from "../../../shared/context/notificationContext";
+import { EmptyState } from "../../../shared/components/empty";
 
 const ITEMS_PER_PAGE: number = 5;
 
@@ -35,6 +37,7 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { showNotification } = useNotificationContext();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
@@ -61,14 +64,30 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
   };
 
   const handleEdit = async (subject: Subject) => {
-    await onEdit(subject);
-    setIsEditModalOpen(false);
+    try {
+      await onEdit(subject);
+      setIsEditModalOpen(false);
+      showNotification("success", "Materia actualizada exitosamente");
+    } catch (error: any) {
+      showNotification("error", error.message);
+    }
   };
 
   const handleDelete = async (subject: Subject) => {
-    await onDelete(subject);
-    setIsDeleteModalOpen(false);
+    try {
+      await onDelete(subject);
+      setIsDeleteModalOpen(false);
+      showNotification("success", "Materia eliminada exitosamente");
+    } catch (error: any) {
+      showNotification("error", error.message);
+    }
   };
+
+  if (subjects.length === 0 && !isLoading) {
+    return (
+      <EmptyState title="Materias" message="No hay materias disponibles" />
+    );
+  }
 
   return (
     <Fragment>
@@ -85,7 +104,7 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
               />
             </div>
-            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200">
+            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-600 transition-all duration-200">
               <Filter className="h-4 w-4" />
               Filtros
               <ChevronDown className="h-4 w-4" />
@@ -113,7 +132,7 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={4}>
+                  <td colSpan={5}>
                     <TableSkeleton />
                   </td>
                 </tr>
