@@ -1,20 +1,30 @@
 import React from "react";
 import { Card } from "../../../shared/components/card";
 import { Activity, ClipboardList } from "lucide-react";
+import { Log } from "../../../shared/models/logs.types";
 
-const LogsStats: React.FC = () => {
+interface LogsStatsProps {
+  logs: Log[];
+}
+
+const LogsStats: React.FC<LogsStatsProps> = ({ logs }) => {
+  const total = logs.length;
+  const totalAccepted = logs.filter(
+    (log) => log.status === "accepted"
+  ).length;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <Card
-        title="Total de Registros"
-        value={100}
-        description="Comparado al mes anterior"
+        title="Total de Asesorias"
+        value={total}
+        description="Registradas actualmente"
         icon={ClipboardList}
       />
       <Card
-        title="Registros Activos"
-        value={85}
-        description="Registros con asignaciones actuales"
+        title="Asesorias Activas"
+        value={totalAccepted}
+        description="Aceptadas por el tutor"
         icon={Activity}
       />
     </div>
