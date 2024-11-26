@@ -48,7 +48,7 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
 
   const { searchTerm, filteredItems, handleSearch } = useSearch({
     items: users,
-    searchableFields: ["name", "email", "roleName"],
+    searchableFields: ["user_name", "email", "roleName"],
   });
 
   const {
@@ -178,7 +178,7 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
                 >
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
-                      {user.name}
+                      {user.user_name}
                     </div>
                   </td>
                   <td className="px-6 py-4">

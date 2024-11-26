@@ -42,21 +42,22 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
       .filter((subject) => subject.status === "active")
       .map((subject) => ({
         value: subject.id,
-        label: subject.name,
+        label: subject.subject_name,
       }));
   }, [list]);
 
   const [formData, setFormData] = useState({
-    name: "",
+    tutor_name: "",
     department: "",
     email: "",
     phone: "",
     subjects: [] as number[],
     status: "active" as "active" | "inactive",
+    shift: "matutino" as "matutino" | "vespertino",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
+    tutor_name: "",
     department: "",
     phone: "",
     email: "",
@@ -65,10 +66,10 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setFormData({ ...formData, name: value });
+    setFormData({ ...formData, tutor_name: value });
     setErrors({
       ...errors,
-      name: validateName(value) ? "" : "Nombre inválido",
+      tutor_name: validateName(value) ? "" : "Nombre inválido",
     });
   };
 
@@ -140,11 +141,12 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
 
     const body: TutorData = {
       tutorData: {
-        name: formData.name,
+        tutor_name: formData.tutor_name,
         department: formData.department,
         email: formData.email,
         phone: formData.phone,
         status: formData.status,
+        shift: formData.shift,
       },
       subjectIds: formData.subjects,
     };
@@ -170,10 +172,10 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre Completo"
-              value={formData.name}
+              value={formData.tutor_name}
               onChange={handleNameChange}
               disabled={isLoading}
-              error={errors.name}
+              error={errors.tutor_name}
             />
             <FormField
               label="Departamento"
@@ -303,6 +305,26 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
                 <option value="active">Activo</option>
                 <option value="inactive">Inactivo</option>
               </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 mt-4">
+                  Turno
+                </label>
+                <select
+                  value={formData.shift}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      shift: e.target.value as "matutino" | "vespertino",
+                    })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
+                  required
+                  disabled={isLoading}
+                >
+                  <option value="matutino">Matutino</option>
+                  <option value="vespertino">Vespertino</option>
+                </select>
+              </div>
             </div>
           </div>
 

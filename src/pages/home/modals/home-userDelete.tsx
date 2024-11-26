@@ -48,7 +48,7 @@ const HomeUserDeleteModal: React.FC<HomeUserDeleteModalProps> = ({
 
             <p className="text-center text-gray-900 mb-4">
               ¿Estás seguro que deseas eliminar al usuario{" "}
-              <strong>{user.name}</strong>?
+              <strong>{user.user_name}</strong>?
             </p>
 
             <p className="text-center text-gray-500 text-sm mb-6">

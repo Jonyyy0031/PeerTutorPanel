@@ -48,7 +48,7 @@ const DeleteSubjectModal: React.FC<DeleteSubjectProps> = ({
 
             <p className="text-center text-text-dark mb-4">
               ¿Estás seguro que deseas eliminar la materia{" "}
-              <strong>{subject?.name}</strong>?
+              <strong>{subject?.subject_name}</strong>?
             </p>
 
             <p className="text-center text-text-light text-sm mb-6">

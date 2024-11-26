@@ -45,7 +45,7 @@ const TutorTable: React.FC<TutorTableProps> = ({
 
   const { searchTerm, filteredItems, handleSearch } = useSearch({
     items: tutors,
-    searchableFields: ["name", "email", "phone"],
+    searchableFields: ["tutor_name", "email", "phone"],
   });
 
   const {
@@ -131,6 +131,9 @@ const TutorTable: React.FC<TutorTableProps> = ({
                 <th className="px-6 py-4 text-left text-xs font-medium uppercase text-gray-500 tracking-wider">
                   Estado
                 </th>
+                <th className="px-6 py-4 text-left text-xs font-medium uppercase text-gray-500 tracking-wider">
+                  Turno
+                </th>
                 <th className="px-6 py-4 text-right text-xs font-medium uppercase text-gray-500 tracking-wider">
                   Acciones
                 </th>
@@ -151,7 +154,7 @@ const TutorTable: React.FC<TutorTableProps> = ({
                   >
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">
-                        {tutor.name}
+                        {tutor.tutor_name}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -178,14 +181,14 @@ const TutorTable: React.FC<TutorTableProps> = ({
                             key={subject.id}
                             className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-200 text-primary-700"
                           >
-                            {subject.name}
+                            {subject.subject_name}
                           </span>
                         ))}
                         {tutor.subjectIds.length > 3 && (
                           <Tippy
                             content={tutor.subjectIds
                               .slice(3)
-                              .map((subject) => subject.name)
+                              .map((subject) => subject.subject_name)
                               .join(", ")}
                             placement="bottom-start"
                             delay={[200, 0]}
@@ -207,6 +210,11 @@ const TutorTable: React.FC<TutorTableProps> = ({
                       >
                         {tutor.status === "active" ? "Activo" : "Inactivo"}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-600">
+                        {tutor.shift.toUpperCase()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

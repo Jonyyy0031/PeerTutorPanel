@@ -31,14 +31,14 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
   isLoading,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    user_name: "",
     email: "",
     password: "",
     role_id: 0,
   });
 
   const [errors, setErrors] = useState({
-    name: "",
+    user_name: "",
     email: "",
     role: "",
     password: "",
@@ -64,10 +64,10 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setFormData({ ...formData, name: value });
+    setFormData({ ...formData, user_name: value });
     setErrors({
       ...errors,
-      name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
+      user_name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
     });
   };
 
@@ -112,10 +112,10 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre"
-              value={formData.name}
+              value={formData.user_name}
               onChange={handleNameChange}
               disabled={isLoading}
-              error={errors.name}
+              error={errors.user_name}
             />
 
             <FormField

@@ -44,7 +44,7 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
 
   const { searchTerm, filteredItems, handleSearch } = useSearch({
     items: subjects,
-    searchableFields: ["name", "department"],
+    searchableFields: ["subject_name", "department"],
   });
 
   const {
@@ -146,7 +146,7 @@ const SubjectTable: React.FC<SubjectTableProps> = ({
                       <div className="flex items-center">
                         <Book className="h-5 w-5 text-gray-400" />
                         <span className="ml-2 text-sm font-medium text-gray-900">
-                          {subject.name}
+                          {subject.subject_name}
                         </span>
                       </div>
                     </td>

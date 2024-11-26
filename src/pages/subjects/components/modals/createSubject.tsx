@@ -22,22 +22,22 @@ const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
   isLoading,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    subject_name: "",
     department: "",
     status: "active" as "active" | "inactive",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
+    subject_name: "",
     department: "",
   });
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setFormData({ ...formData, name: value });
+    setFormData({ ...formData, subject_name: value });
     setErrors({
       ...errors,
-      name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
+      subject_name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
     });
   };
   const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,10 +74,10 @@ const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre de la Materia"
-              value={formData.name}
+              value={formData.subject_name}
               onChange={handleNameChange}
               disabled={isLoading}
-              error={errors.name}
+              error={errors.subject_name}
             />
             <FormField
               label="Departamento"
