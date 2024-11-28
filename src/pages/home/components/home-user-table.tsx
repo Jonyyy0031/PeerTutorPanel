@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { User } from "../../../shared/models/user.types";
 
@@ -41,10 +41,10 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
   onDelete,
 }) => {
   const { showNotification } = useNotificationContext();
-  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const { searchTerm, filteredItems, handleSearch } = useSearch({
     items: users,
@@ -99,14 +99,23 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
 
   if (users.length === 0 && !isLoading) {
     return (
-      <EmptyState
-        title="Usuarios"
-        message="No hay usuarios disponibles"
-        action={{
-          label: "Nuevo Usuario",
-          onClick: () => setIsCreateModalOpen(true),
-        }}
-      />
+      <>
+        <EmptyState
+          title="Usuarios"
+          message="No hay usuarios disponibles"
+          action={{
+            label: "Nuevo Usuario",
+            onClick: () => setIsCreateModalOpen(true),
+          }}
+        />
+        {isCreateModalOpen && (
+          <HomeUserCreateModal
+            onClose={() => setIsCreateModalOpen(false)}
+            onCreate={handleCreate}
+            isLoading={isLoading}
+          />
+        )}
+      </>
     );
   }
 

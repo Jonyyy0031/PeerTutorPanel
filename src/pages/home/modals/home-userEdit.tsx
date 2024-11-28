@@ -34,7 +34,7 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
   isLoading,
 }) => {
   const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api"),
+    () => new ApiService("http://localhost:3000/api/admin"),
     []
   );
 

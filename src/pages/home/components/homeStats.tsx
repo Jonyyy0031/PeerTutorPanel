@@ -8,7 +8,7 @@ import { Subject } from "../../../shared/models/subject.types";
 
 const HomeStats: React.FC = () => {
   const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api"),
+    () => new ApiService("http://localhost:3000/api/admin"),
     []
   );
 

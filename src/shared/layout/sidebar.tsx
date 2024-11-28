@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         <nav className="space-y-2">
-          <SidebarLink link="" icon={Home} text="Inicio"/>
+          <SidebarLink link="home" icon={Home} text="Inicio"/>
           <SidebarLink link="tutors" icon={Users} text="Tutores" />
           <SidebarLink link="subjects" icon={BookOpen} text="Materias" />
           <SidebarLink link="logs" icon={ClipboardList} text="Registros" />

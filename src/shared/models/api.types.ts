@@ -14,3 +14,17 @@ export interface UseApiState<T> {
     loading: boolean;
     error: Error | null;
 }
+
+export interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    token: string;
+    user: {
+        id: number;
+        email: string;
+        roleName: string;
+    };
+}

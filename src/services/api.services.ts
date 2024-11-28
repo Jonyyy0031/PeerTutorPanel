@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { ApiResponse, BaseEntity } from '../shared/models/api.types';
+import { ApiResponse, BaseEntity, LoginCredentials, LoginResponse } from '../shared/models/api.types';
 
 export class ApiService {
   private api: AxiosInstance;
@@ -12,13 +12,13 @@ export class ApiService {
       },
     });
 
-    // this.api.interceptors.request.use((config) => {
-    //   const token = localStorage.getItem('token');
-    //   if (token) {
-    //     config.headers.Authorization = `Bearer ${token}`;
-    //   }
-    //   return config;
-    // });
+    this.api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.authorization = `${token}`;
+      }
+      return config;
+    });
   }
 
   async getAll<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T[]>> {
@@ -33,6 +33,18 @@ export class ApiService {
   async getById<T>(url: string, id: number | string): Promise<ApiResponse<T>> {
     try {
       const response = await this.api.get<ApiResponse<T>>(`${url}/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async login(url: string, credentials: LoginCredentials): Promise<ApiResponse<LoginResponse>> {
+    try {
+      const response = await this.api.post<ApiResponse<LoginResponse>>(url, credentials);
+      if (response.data.data.token) {
+        localStorage.setItem('token', response.data.data.token);
+      }
       return response.data;
     } catch (error) {
       throw this.handleError(error);

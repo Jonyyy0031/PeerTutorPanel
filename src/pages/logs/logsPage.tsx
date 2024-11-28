@@ -8,7 +8,7 @@ import { Log } from "../../shared/models/logs.types";
 
 const LogsPage: React.FC = () => {
   const { showNotification } = useNotificationContext();
-  const apiServe = useMemo(() => new ApiService("http://localhost:3000/api"), []);
+  const apiServe = useMemo(() => new ApiService("http://localhost:3000/api/admin"), []);
   const { fetchAll, create, update, remove, list, loading } = useApi<Log>(apiServe, "/logs");
 
   useEffect(() => {

@@ -28,7 +28,7 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
   isLoading,
 }) => {
   const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api"),
+    () => new ApiService("http://localhost:3000/api/admin"),
     []
   );
   const { fetchAll, list, loading } = useApi<Subject>(apiService, "/subjects");

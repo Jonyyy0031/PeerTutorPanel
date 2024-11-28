@@ -97,6 +97,8 @@ export function useApi<T extends BaseEntity>(apiService: ApiService, baseUrl: st
         }
     }, [apiService, baseUrl]);
 
+    
+
     const create = useCallback(async (data: Partial<T>) => {
         setState(prev => ({
             ...prev,

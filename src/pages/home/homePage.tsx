@@ -10,7 +10,7 @@ import { ApiService } from "../../services/api.services";
 
 const HomePage: React.FC = () => {
   const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api"),
+    () => new ApiService("http://localhost:3000/api/admin"),
     []
   );
 

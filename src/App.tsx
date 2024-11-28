@@ -4,18 +4,27 @@ import Layout from "./shared/layout/layout";
 import TutorsPage from "./pages/tutors/tutorsPage";
 import SubjectsPage from "./pages/subjects/subjectsPage";
 import LogsPage from "./pages/logs/logsPage";
+import LoginPage from "./pages/login/login";
 
 const App: React.FC = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/tutors" element={<TutorsPage />} />
-          <Route path="/subjects" element={<SubjectsPage />} />
-          <Route path="/logs" element={<LogsPage />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        <Route path={"/"} element={<LoginPage />} />
+        <Route
+          path={"*"}
+          element={
+            <Layout>
+              <Routes>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/tutors" element={<TutorsPage />} />
+                <Route path="/subjects" element={<SubjectsPage />} />
+                <Route path="/logs" element={<LogsPage />} />
+              </Routes>
+            </Layout>
+          }
+        />
+      </Routes>
     </Router>
   );
 };
