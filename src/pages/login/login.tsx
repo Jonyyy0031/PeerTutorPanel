@@ -1,15 +1,22 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LogIn } from "lucide-react";
 import LogoUni from "../../assets/LogoPoli.svg";
 import { ApiService } from "../../services/api.services";
 import { useAuth } from "../../shared/hooks/useAuth";
 import { validateEmail } from "../../shared/helpers/validators";
+import LoadingSpinner from "../../shared/components/LoadingSpinner";
+import { useNotificationContext } from "../../shared/context/notificationContext";
 
 const login: React.FC = () => {
+  const { showNotification } = useNotificationContext();
+  const navigate = useNavigate();
+
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api/public"),
     []
   );
-  const { login, isLoading } = useAuth(apiService, "/login");
+  const { login, loading } = useAuth(apiService, "/login");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -42,10 +49,14 @@ const login: React.FC = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await login(formData);
-      console.log("response from component",response);
-    } catch (error) {
-      console.log(error);
+      await login(formData);
+      if (localStorage.getItem("token")) {
+        showNotification("success", "Inicio de sesión exitoso");
+        navigate("/home");
+      }
+
+    } catch (error: any) {
+      showNotification("error", error.message);
     }
   };
 
@@ -71,6 +82,7 @@ const login: React.FC = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleEmailChange}
+                disabled={loading}
                 placeholder="example@upqroo.edu.mx"
                 className={`w-full p-2 border rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent
                     ${error.email ? "border-red-600" : "border-gray-300"}`}
@@ -89,6 +101,7 @@ const login: React.FC = () => {
                 placeholder="********"
                 value={formData.password}
                 onChange={handlePasswordChange}
+                disabled={loading}
                 className={`w-full p-2 border rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent
                     ${error.password ? "border-red-600" : "border-gray-300"}`}
                 required
@@ -100,10 +113,16 @@ const login: React.FC = () => {
             <div className="mt-16">
               <button
                 type="submit"
-                disabled={isLoading}
-                className="bg-primary text-white w-full p-4 rounded-xl"
+                disabled={loading || !!error.email || !!error.password}
+                className={`w-full bg-primary-600 text-lg text-white px-4 py-4 disabled:opacity-60
+                  rounded-lg flex items-center justify-center  gap-2 hover:bg-primary-700 transition-colors`}
               >
                 Iniciar sesión
+                {loading ? (
+                  <LoadingSpinner size="md" className="text-white" />
+                ) : (
+                  <LogIn size={24} />
+                )}
               </button>
             </div>
           </form>

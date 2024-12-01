@@ -18,6 +18,11 @@ const validateNameWithNumbers = (name: string): boolean => {
     return re.test(name);
 }
 
+export const validateGroup = (group: string): boolean => {
+    const re = /^[0-9]{2}[A-Z]{2}$/;
+    return re.test(group);
+}
+
 const validateDepartment = (department: string): boolean => {
     const re = /^[a-zA-Z0-9\s]+$/;
     return re.test(department);

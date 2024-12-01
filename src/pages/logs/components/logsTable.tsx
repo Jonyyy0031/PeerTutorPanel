@@ -17,6 +17,8 @@ import { usePagination } from "../../../shared/hooks/usePagination";
 import { EmptyState } from "../../../shared/components/empty";
 import { useNotificationContext } from "../../../shared/context/notificationContext";
 import { Log } from "../../../shared/models/logs.types";
+import DeleteLogModal from "./modals/deleteLog";
+import EditLogModal from "./modals/editLog";
 
 interface LogsTableProps {
   logs: Log[];
@@ -52,7 +54,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
     setCurrentPage,
   } = usePagination<Log>({
     items: filteredItems,
-    itemsPerPage: 10,
+    itemsPerPage: ITEMS_PER_PAGE,
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +66,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
     try {
       await onEdit(log);
       setIsEditModalOpen(false);
-      showNotification("success", "Log actualizado correctamente");
+      showNotification("success", "Registro actualizado correctamente");
     } catch (error: any) {
       showNotification("error", error.message);
     }
@@ -74,7 +76,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
     try {
       await onDelete(log);
       setIsDeleteModalOpen(false);
-      showNotification("success", "Log eliminado correctamente");
+      showNotification("success", "Registro eliminado correctamente");
     } catch (error: any) {
       showNotification("error", error.message);
     }
@@ -128,7 +130,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                   Materia
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Dia y Hora
+                  Dia y Hora (Formato: 24hrs)
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
@@ -247,23 +249,24 @@ const LogsTable: React.FC<LogsTableProps> = ({
         </div>
       </div>
 
-      {/* {isEditModalOpen && (
-        <EditSubjectModal
-          subject={selectedSubject!}
+      {isEditModalOpen && (
+        <EditLogModal
+          log={logSelected!}
           onEdit={handleEdit}
           onClose={() => setIsEditModalOpen(false)}
           isLoading={isLoading}
         />
       )}
 
+
       {isDeleteModalOpen && (
-        <DeleteSubjectModal
-          subject={selectedSubject!}
+        <DeleteLogModal
+          log={logSelected!}
           onDelete={handleDelete}
           onClose={() => setIsDeleteModalOpen(false)}
-          loading={isLoading}
+          isLoading={isLoading}
         />
-      )} */}
+      )}
     </Fragment>
   );
 };
