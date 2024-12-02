@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 import Select, { MultiValue } from "react-select";
 import makeAnimated from "react-select/animated";
@@ -17,6 +17,7 @@ import { ApiService } from "../../../../services/api.services";
 import { useApi } from "../../../../shared/hooks/useApi";
 import { Subject } from "../../../../shared/models/subject.types";
 import FormField from "../../../../shared/components/formField";
+import { useForm } from "../../../../shared/hooks/useForm";
 
 interface EditTutorModalProps {
   tutor: Tutor;
@@ -31,21 +32,35 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
   onEdit,
   isLoading,
 }) => {
-  const [formData, setFormData] = useState({
-    ...tutor,
-    subjectIds: tutor.subjectIds.map((subject) => subject.id),
-    selectedSubjects: tutor.subjectIds.map((subject) => ({
-      value: subject.id,
-      label: subject.subject_name,
-    })),
-  });
-  const [errors, setErrors] = useState({
-    tutor_name: "",
-    department: "",
-    phone: "",
-    email: "",
-    subjects: "",
-  });
+  const validationRules = {
+    tutor_name: (value: string) =>
+      !validateName(value) ? "Nombre inválido" : undefined,
+    department: (value: string) =>
+      !validateDepartment(value) ? "Departamento inválido" : undefined,
+    email: (value: string) =>
+      !validateEmail(value) ? "Correo electrónico inválido" : undefined,
+    phone: (value: string) =>
+      !validatePhone(value) ? "Formato requerido: XXX-XXX-XXXX" : undefined,
+    subjectIds: (value: (number | undefined)[]) =>
+      value?.length === 0 ? "Seleccione al menos una materia" : undefined,
+    status: (value: string) =>
+      !value ? "El estado es requerido" : undefined,
+    shift: (value: string) =>
+      !value ? "El turno es requerido" : undefined,
+  };
+
+  const { formData, errors, handleChange, isValid } = useForm(
+    {
+      ...tutor,
+      subjectIds: tutor.subjectIds.map((subject) => subject.id),
+      selectedSubjects: tutor.subjectIds.map((subject) => ({
+        value: subject.id,
+        label: subject.subject_name,
+      })),
+    },
+    validationRules
+  );
+
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api/admin"),
     []
@@ -72,27 +87,12 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
       label: string | undefined;
     }>
   ) => {
-    setFormData({
-      ...formData,
-      subjectIds: selectedOptions.map((option) => option.value),
-    });
-  };
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, tutor_name: value });
-    setErrors({
-      ...errors,
-      tutor_name: validateName(value) ? "" : "Nombre inválido",
-    });
-  };
-
-  const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, department: value });
-    setErrors({
-      ...errors,
-      department: validateDepartment(value) ? "" : "Departamento inválido",
+    handleChange({
+      target: {
+        name: "subjectIds",
+        value: selectedOptions.map((option) => option.value),
+      },
     });
   };
 
@@ -105,44 +105,19 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
       } else if (value.length > 3) {
         value = value.slice(0, 3) + "-" + value.slice(3);
       }
-      setFormData({ ...formData, phone: value });
-      setErrors({
-        ...errors,
-        phone: validatePhone(value) ? "" : "Formato requerido: XXX-XXX-XXXX",
+      handleChange({
+        target: {
+          name: "phone",
+          value,
+        },
       });
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, email: value });
-    setErrors({
-      ...errors,
-      email: validateEmail(value) ? "" : "Correo electrónico inválido",
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validatePhone(formData.phone)) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: "Formato requerido: XXX-XXX-XXXX",
-      }));
-      return;
-    }
-    if (!validateEmail(formData.email)) {
-      setErrors((prev) => ({ ...prev, email: "Correo electrónico inválido" }));
-      return;
-    }
 
-    if (formData.subjectIds.length === 0) {
-      setErrors((prev) => ({
-        ...prev,
-        subjects: "Seleccione al menos una materia",
-      }));
-      return;
-    }
+    if (!isValid()) return;
 
     const { selectedSubjects, subjectIds, ...tutorData } = formData;
 
@@ -174,27 +149,31 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre Completo"
+              name="tutor_name"
               value={formData.tutor_name}
-              onChange={handleNameChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.tutor_name}
             />
             <FormField
               label="Departamento"
+              name="department"
               value={formData.department}
-              onChange={handleDepartmentChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.department}
             />
             <FormField
               label="Correo Electrónico"
+              name="email"
               value={formData.email}
-              onChange={handleEmailChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.email}
             />
             <FormField
               label="Teléfono"
+              name="phone"
               value={formData.phone}
               onChange={handlePhoneChange}
               disabled={isLoading}
@@ -282,8 +261,8 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
                   }),
                 }}
               />
-              {errors.subjects && (
-                <p className="mt-2 text-sm text-red-600">{errors.subjects}</p>
+              {errors.subjectIds && (
+                <p className="mt-2 text-sm text-red-600">{errors.subjectIds}</p>
               )}
             </div>
 
@@ -292,13 +271,9 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
                 Estado
               </label>
               <select
+                name="status"
                 value={formData.status}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    status: e.target.value as "active" | "inactive",
-                  })
-                }
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 required
                 disabled={isLoading}
@@ -312,13 +287,9 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
                 Turno
               </label>
               <select
+                name="shift"
                 value={formData.shift}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    shift: e.target.value as "matutino" | "vespertino",
-                  })
-                }
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 required
                 disabled={isLoading}

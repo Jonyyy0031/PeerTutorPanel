@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 import Select, { SingleValue } from "react-select";
 import makeAnimated from "react-select/animated";
@@ -10,9 +10,11 @@ import FormField from "../../../shared/components/formField";
 import {
   validateEmail,
   validateNameWithNumbers,
+  validatePassword,
 } from "../../../shared/helpers/validators";
 import { useApi } from "../../../shared/hooks/useApi";
 import { ApiService } from "../../../services/api.services";
+import { useForm } from "../../../shared/hooks/useForm";
 
 interface HomeUserCreateModalProps {
   onCreate: (user: Partial<User>) => Promise<void>;
@@ -30,19 +32,28 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
   onCreate,
   isLoading,
 }) => {
-  const [formData, setFormData] = useState({
-    user_name: "",
-    email: "",
-    password: "",
-    role_id: 0,
-  });
 
-  const [errors, setErrors] = useState({
-    user_name: "",
-    email: "",
-    role: "",
-    password: "",
-  });
+  const validationRules = {
+    user_name: (value: string) =>
+      !validateNameWithNumbers(value) ? "Nombre inválido" : undefined,
+    email: (value: string) =>
+      !validateEmail(value) ? "Correo electrónico inválido" : undefined,
+    role_id: (value: number) =>
+      !value ? "El rol es requerido" : undefined,
+    password: (value: string) =>
+      !validatePassword(value) ? "La contraseña debe ser de minimo 8 caracteres, 1 mayuscula y 1 simbolo" : undefined,
+  }
+
+  const { formData, errors, handleChange, isValid } = useForm(
+    {
+      user_name: "",
+      email: "",
+      password: "",
+      role_id: 0,
+    },
+    validationRules
+  );
+
 
   const apiService = useMemo(
     () => new ApiService("http://localhost:3000/api/admin"),
@@ -62,35 +73,20 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
     }));
   }, [list]);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, user_name: value });
-    setErrors({
-      ...errors,
-      user_name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
-    });
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, email: value });
-    setErrors({
-      ...errors,
-      email: validateEmail(value) ? "" : "Correo electrónico inválido",
-    });
-  };
-
   const handleRolesChange = (
     option: SingleValue<{ value: number; label: string }>
   ) => {
-    setFormData({
-      ...formData,
-      role_id: option!.value,
+    handleChange({
+      target: {
+        name: "role_id",
+        value: option?.value,
+      }
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValid()) return;
     onCreate(formData);
   };
 
@@ -112,16 +108,18 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre"
+              name="user_name"
               value={formData.user_name}
-              onChange={handleNameChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.user_name}
             />
 
             <FormField
               label="Email"
+              name="email"
               value={formData.email}
-              onChange={handleEmailChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.email}
             />
@@ -188,17 +186,16 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
                   }),
                 }}
               />
-              {errors.role && (
-                <p className="mt-2 text-sm text-red-600">{errors.role}</p>
+              {errors.role_id && (
+                <p className="mt-2 text-sm text-red-600">{errors.role_id}</p>
               )}
             </div>
 
             <FormField
               label="Contraseña"
+              name="password"
               value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.password}
             />

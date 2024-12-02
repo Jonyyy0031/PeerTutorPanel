@@ -8,6 +8,7 @@ import {
   validateDepartment,
   validateNameWithNumbers,
 } from "../../../../shared/helpers/validators";
+import { useForm } from "../../../../shared/hooks/useForm";
 
 interface EditSubjectModalProps {
   subject: Subject;
@@ -22,34 +23,25 @@ const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
   onEdit,
   isLoading,
 }) => {
-  const [formData, setFormData] = useState(subject);
+
+  const validationRules = {
+    subject_name: (value: string) =>
+      !validateNameWithNumbers(value) ? "Nombre inválido" : undefined,
+    department: (value: string) =>
+      !validateDepartment(value) ? "Departamento inválido" : undefined,
+    status: (value: string) =>
+      !value ? "El estado es requerido" : undefined,
+  };
+
+  const { formData, errors, handleChange, isValid } = useForm(
+    subject,
+    validationRules
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValid()) return;
     onEdit(formData);
-  };
-
-  const [errors, setErrors] = useState({
-    subject_name: "",
-    department: "",
-    status: "",
-  });
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, subject_name: value });
-    setErrors({
-      ...errors,
-      subject_name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
-    });
-  };
-  const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, department: value });
-    setErrors({
-      ...errors,
-      department: validateDepartment(value) ? "" : "Departamento inválido",
-    });
   };
 
   return (
@@ -72,15 +64,17 @@ const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre de la Materia"
+              name="subject_name"
               value={formData.subject_name}
-              onChange={handleNameChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.subject_name}
             />
             <FormField
               label="Departamento"
+              name="department"
               value={formData.department}
-              onChange={handleDepartmentChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.department}
             />
@@ -90,12 +84,8 @@ const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
               </label>
               <select
                 value={formData.status}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    status: e.target.value as "active" | "inactive",
-                  })
-                }
+                name="status"
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 required
                 disabled={isLoading}

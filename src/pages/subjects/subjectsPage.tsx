@@ -5,7 +5,7 @@ import CreateSubjectModal from "./components/modals/createSubject";
 import SubjectStats from "./components/subjectStats";
 import SubjectTable from "./components/subjectTable";
 
-import { Subject } from "../../shared/models/subject.types";
+import { CreateSubjectDTO, Subject } from "../../shared/models/subject.types";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 import { useApi } from "../../shared/hooks/useApi";
@@ -29,7 +29,7 @@ const subjectsPage: React.FC = () => {
     fetchAll();
   }, [fetchAll]);
 
-  const handleCreate = async (subject: Partial<Subject>) => {
+  const handleCreate = async (subject: CreateSubjectDTO) => {
     try {
       await create(subject);
       setIsCreateModalOpen(false);

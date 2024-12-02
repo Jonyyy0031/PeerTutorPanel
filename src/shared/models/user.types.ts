@@ -7,7 +7,7 @@ export interface User extends BaseEntity {
     email: string;
     password: string;
     roleName?: role;
-    rol_id?: number;
+    role_id?: number;
 }
 
 export interface Role {

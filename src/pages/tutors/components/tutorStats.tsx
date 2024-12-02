@@ -18,13 +18,13 @@ const TutorStats: React.FC<TutorStatsProps> = ({ tutors }) => {
       <Card
         title="Total de Tutores"
         value={total}
-        description="Comparado al mes anterior"
+        description="Registrados en el sistema"
         icon={Users}
       />
       <Card
         title="Tutores Activos"
         value={totalActive}
-        description="Tutores con asignaciones actuales"
+        description="Actualmente activos"
         icon={Activity}
       />
     </div>

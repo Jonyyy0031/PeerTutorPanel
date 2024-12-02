@@ -7,6 +7,7 @@ import { useAuth } from "../../shared/hooks/useAuth";
 import { validateEmail } from "../../shared/helpers/validators";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import { useNotificationContext } from "../../shared/context/notificationContext";
+import { useForm } from "../../shared/hooks/useForm";
 
 const login: React.FC = () => {
   const { showNotification } = useNotificationContext();
@@ -18,36 +19,27 @@ const login: React.FC = () => {
   );
   const { login, loading } = useAuth(apiService, "/login");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const [error, setError] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, email: value });
-    setError({
-      ...error,
-      email: validateEmail(value) ? "" : "Correo electronico invalido",
-    });
+  const validationRules = {
+    email: (value: string) =>
+      !validateEmail(value) ? "Correo electrónico inválido" : undefined,
+    password: (value: string) =>
+      !value ? "La contraseña es requerida" : undefined
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, password: value });
-    setError({
-      ...error,
+  const { formData, errors, handleChange, isValid } = useForm(
+    {
+      email: "",
       password: "",
-    });
-  };
+    },
+    validationRules
+  );
+
+
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isValid()) return;
     try {
       await login(formData);
       if (localStorage.getItem("token")) {
@@ -80,16 +72,17 @@ const login: React.FC = () => {
               </label>
               <input
                 type="email"
+                name="email"
                 value={formData.email}
-                onChange={handleEmailChange}
+                onChange={handleChange}
                 disabled={loading}
                 placeholder="example@upqroo.edu.mx"
                 className={`w-full p-2 border rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent
-                    ${error.email ? "border-red-600" : "border-gray-300"}`}
+                    ${errors.email ? "border-red-600" : "border-gray-300"}`}
                 required
               />
-              {error.email && (
-                <p className="mt-2 text-sm text-red-600">{error.email}</p>
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
               )}
             </div>
             <div className="mt-8">
@@ -98,22 +91,23 @@ const login: React.FC = () => {
               </label>
               <input
                 type="password"
+                name="password"
                 placeholder="********"
                 value={formData.password}
-                onChange={handlePasswordChange}
+                onChange={handleChange}
                 disabled={loading}
                 className={`w-full p-2 border rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent
-                    ${error.password ? "border-red-600" : "border-gray-300"}`}
+                    ${errors.password ? "border-red-600" : "border-gray-300"}`}
                 required
               />
-              {error.password && (
-                <p className="mt-2 text-sm text-red-600">{error.password}</p>
+              {errors.password && (
+                <p className="mt-2 text-sm text-red-600">{errors.password}</p>
               )}
             </div>
             <div className="mt-16">
               <button
                 type="submit"
-                disabled={loading || !!error.email || !!error.password}
+                disabled={loading || !!errors.email || !!errors.password}
                 className={`w-full bg-primary-600 text-lg text-white px-4 py-4 disabled:opacity-60
                   rounded-lg flex items-center justify-center  gap-2 hover:bg-primary-700 transition-colors`}
               >

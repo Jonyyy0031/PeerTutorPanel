@@ -30,7 +30,6 @@ export function useAuth(apiService: ApiService, baseUrl: string) {
             error: null
           }));
           resolve(response);
-          console.log("hook", response);
         }, 1200);
       });
     } catch (error) {

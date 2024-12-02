@@ -7,6 +7,7 @@ import {
   validateGroup,
   validateName,
 } from "../../../../shared/helpers/validators";
+import { useForm } from "../../../../shared/hooks/useForm";
 
 interface EditLogModalProps {
   log: Log;
@@ -21,14 +22,23 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
   onEdit,
   isLoading,
 }) => {
-  const [formData, setFormData] = useState(log);
-  const [error, setError] = useState({
-    student_name: "",
-    student_group: "",
-    day_of_week: "",
-    hour: "",
-    status: "",
-  });
+  const validationErrors = {
+    student_name: (value: string) =>
+      !validateName(value)
+        ? "El nombre del estudiante no es válido"
+        : undefined,
+    student_group: (value: string) =>
+      !validateGroup(value) ? "El grupo no es válido" : undefined,
+    day_of_week: (value: string) =>
+      !value ? "El día de la semana es requerido" : undefined,
+    hour: (value: string) => (!value ? "La hora es requerida" : undefined),
+    status: (value: string) => (!value ? "El estado es requerido" : undefined),
+  };
+
+  const { formData, isValid, errors, handleChange } = useForm(
+    log,
+    validationErrors
+  );
 
   const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   const timeSlots = [
@@ -48,41 +58,21 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
     "20:00:00",
   ];
 
-  const handleNameStudentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, student_name: e.target.value });
-    setError({
-      ...error,
-      student_name: validateName(e.target.value)
-        ? ""
-        : "El nombre del estudiante no es válido",
-    });
-  };
-
-  const handleGroupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, student_group: e.target.value });
-    setError({
-      ...error,
-      student_group: validateGroup(e.target.value)
-        ? ""
-        : "El grupo no es válido",
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (!isValid()) return;
     const body = {
-        id: formData.id,
-        student_name: formData.student_name,
-        student_group: formData.student_group,
-        tutor_id: formData.tutor_id,
-        subject_id: formData.subject_id,
-        schedules: {
-            day_of_week: formData.day_of_week,
-            hour: formData.hour
-        },
-        status: formData.status,
-    }
+      id: formData.id,
+      student_name: formData.student_name,
+      student_group: formData.student_group,
+      tutor_id: formData.tutor_id,
+      subject_id: formData.subject_id,
+      schedules: {
+        day_of_week: formData.day_of_week,
+        hour: formData.hour,
+      },
+      status: formData.status,
+    };
     //@ts-ignore
     onEdit(body);
   };
@@ -107,18 +97,20 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre del Estudiante"
+              name="student_name"
               value={formData.student_name}
-              onChange={handleNameStudentChange}
+              onChange={handleChange}
               disabled={isLoading}
-              error={error.student_name}
+              error={errors.student_name}
             />
 
             <FormField
               label="Grupo"
+              name="student_group"
               value={formData.student_group}
-              onChange={handleGroupChange}
+              onChange={handleChange}
               disabled={isLoading}
-              error={error.student_group}
+              error={errors.student_group}
             />
 
             <div>
@@ -126,13 +118,9 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
                 Día de la Semana
               </label>
               <select
+                name="day_of_week"
                 value={formData.day_of_week}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    day_of_week: e.target.value as Log["day_of_week"],
-                  })
-                }
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 disabled={isLoading}
               >
@@ -149,10 +137,9 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
                 Hora
               </label>
               <select
+                name="hour"
                 value={formData.hour}
-                onChange={(e) =>
-                  setFormData({ ...formData, hour: e.target.value })
-                }
+                onChange={handleChange}
                 className=" w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 disabled={isLoading}
               >
@@ -169,16 +156,9 @@ const EditLogModal: React.FC<EditLogModalProps> = ({
                 Estado
               </label>
               <select
+                name="status"
                 value={formData.status}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    status: e.target.value as
-                      | "pending"
-                      | "accepted"
-                      | "cancelled",
-                  })
-                }
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
                 disabled={isLoading}
               >

@@ -2,6 +2,7 @@ import React from "react";
 
 interface FormFieldProps {
   label: string;
+  name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
@@ -10,6 +11,7 @@ interface FormFieldProps {
 
 const FormField: React.FC<FormFieldProps> = ({
   label,
+  name,
   value,
   onChange,
   error,
@@ -22,6 +24,7 @@ const FormField: React.FC<FormFieldProps> = ({
       </label>
       <input
         type="text"
+        name={name}
         value={value}
         onChange={onChange}
         className={`w-full p-2 border rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent

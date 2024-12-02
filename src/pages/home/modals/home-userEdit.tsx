@@ -14,6 +14,7 @@ import {
 
 import { useApi } from "../../../shared/hooks/useApi";
 import { ApiService } from "../../../services/api.services";
+import { useForm } from "../../../shared/hooks/useForm";
 
 interface HomeUserEditModalProps {
   user: User;
@@ -51,47 +52,36 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
     }));
   }, [list]);
 
-  const [formData, setFormData] = useState({
-    ...user,
-    role_id: 0,
-  });
+  const validationRules = {
+    user_name: (value: string) =>
+      !validateNameWithNumbers(value) ? "Nombre inválido" : undefined,
+    email: (value: string) =>
+      !validateEmail(value) ? "Correo electrónico inválido" : undefined,
+    role_id: (value: number | undefined ) =>
+      !value ? "El rol es requerido" : undefined,
+    password: (value: string) =>
+      !value ? "La contraseña es requerida" : undefined,
+  }
 
-  const [errors, setErrors] = useState({
-    user_name: "",
-    email: "",
-    password: "",
-    role_id: "",
-  });
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, user_name: value });
-    setErrors({
-      ...errors,
-      user_name: validateNameWithNumbers(value) ? "" : "Nombre inválido",
-    });
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData({ ...formData, email: value });
-    setErrors({
-      ...errors,
-      email: validateEmail(value) ? "" : "Correo electrónico inválido",
-    });
-  };
+  const { formData, handleChange, errors, isValid } = useForm(
+    user,
+    validationRules
+  );
 
   const handleRolesChange = (
     option: SingleValue<{ value: number; label: string }>
   ) => {
-    setFormData({
-      ...formData,
-      role_id: option!.value,
+    handleChange({
+      target: {
+        name: "role_id",
+        value: option?.value,
+      },
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValid()) return;
     const {roleName, ...body} = formData;
     onEdit(body);
   };
@@ -116,16 +106,18 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
           <div className="space-y-4">
             <FormField
               label="Nombre"
+              name="user_name"
               value={formData.user_name}
-              onChange={handleNameChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.user_name}
             />
 
             <FormField
               label="Email"
+              name="email"
               value={formData.email}
-              onChange={handleEmailChange}
+              onChange={handleChange}
               disabled={isLoading}
               error={errors.email}
             />
@@ -200,24 +192,15 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-600 focus-visible:outline-none focus:border-transparent"
-                required
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <p className="mt-2 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
+            <FormField
+              label="Contraseña"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+              error={errors.password}
+            />
+            
           </div>
           <div className="flex justify-end space-x-4 mt-6">
             <button

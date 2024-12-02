@@ -7,3 +7,9 @@ export interface Subject extends BaseEntity {
     department: string;
     status: Status;
 }
+
+export interface CreateSubjectDTO {
+    subject_name: string;
+    department: string;
+    status: Status;
+}
