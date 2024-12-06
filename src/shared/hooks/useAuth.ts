@@ -47,13 +47,8 @@ export function useAuth(apiService: ApiService, baseUrl: string) {
   }, [apiService, baseUrl]);
 
 
-  const logout = () => {
-    localStorage.removeItem('token');
-  };
-
   return {
     login,
-    logout,
     ...state
   };
 }
