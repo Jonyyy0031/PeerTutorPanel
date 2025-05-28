@@ -14,11 +14,9 @@ import {
   ChevronDown,
   Filter,
   Pencil,
-  Plus,
   Search,
   Trash2,
 } from "lucide-react";
-import HomeUserCreateModal from "../modals/home-userCreate";
 import { EmptyState } from "../../../shared/components/empty";
 import HomeUserEditModal from "../modals/home-userEdit";
 import HomeUserDeleteModal from "../modals/home-userDelete";
@@ -36,12 +34,10 @@ interface HomeUserTableProps {
 const HomeUserTable: React.FC<HomeUserTableProps> = ({
   users,
   isLoading,
-  onCreate,
   onEdit,
   onDelete,
 }) => {
   const { showNotification } = useNotificationContext();
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -67,15 +63,6 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
     setCurrentPage(1);
   };
 
-  const handleCreate = async (user: Partial<User>) => {
-    try {
-      await onCreate(user);
-      setIsCreateModalOpen(false);
-      showNotification("success", "Usuario creado exitosamente");
-    } catch (error: any) {
-      showNotification("error", error.message);
-    }
-  };
 
   const handleEdit = async (user: User) => {
     try {
@@ -103,18 +90,7 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
         <EmptyState
           title="Usuarios"
           message="No hay usuarios disponibles"
-          action={{
-            label: "Nuevo Usuario",
-            onClick: () => setIsCreateModalOpen(true),
-          }}
         />
-        {isCreateModalOpen && (
-          <HomeUserCreateModal
-            onClose={() => setIsCreateModalOpen(false)}
-            onCreate={handleCreate}
-            isLoading={isLoading}
-          />
-        )}
       </>
     );
   }
@@ -124,17 +100,6 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-primary-600">Usuarios</h2>
-          <button
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-700 transition-colors"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            {isLoading ? (
-              <LoadingSpinner size="sm" className="text-white" />
-            ) : (
-              <Plus size={20} />
-            )}
-            Nuevo Usuario
-          </button>
         </div>
         <div className="flex justify-between items-center">
           <div className="relative max-w-md w-full">
@@ -253,13 +218,6 @@ const HomeUserTable: React.FC<HomeUserTableProps> = ({
           onPageChange={handlePageChange}
         />
       </div>
-      {isCreateModalOpen && (
-        <HomeUserCreateModal
-          onClose={() => setIsCreateModalOpen(false)}
-          onCreate={handleCreate}
-          isLoading={isLoading}
-        />
-      )}
 
       {isEditModalOpen && (
         <HomeUserEditModal

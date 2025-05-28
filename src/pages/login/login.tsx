@@ -1,8 +1,6 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import LogoUni from "../../assets/LogoPoli.svg";
-import { ApiService } from "../../services/api.services";
 import { useAuth } from "../../shared/hooks/useAuth";
 import { validateEmail } from "../../shared/helpers/validators";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
