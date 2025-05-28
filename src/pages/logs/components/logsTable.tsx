@@ -8,7 +8,6 @@ import {
   Clipboard,
 } from "lucide-react";
 
-import { Tutor } from "../../../shared/models/tutor.types";
 import LoadingSpinner from "../../../shared/components/LoadingSpinner";
 import Pagination from "../../../shared/components/pagination";
 import TableSkeleton from "../../../shared/components/TableSkeleton";

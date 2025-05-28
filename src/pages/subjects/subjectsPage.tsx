@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 import CreateSubjectModal from "./components/modals/createSubject";
@@ -9,17 +9,14 @@ import { CreateSubjectDTO, Subject } from "../../shared/models/subject.types";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 import { useApi } from "../../shared/hooks/useApi";
-import { ApiService } from "../../services/api.services";
 import { useNotificationContext } from "../../shared/context/notificationContext";
+import { useAdminApiService } from "../../shared/hooks/useAdminAPI";
 
 const subjectsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { showNotification } = useNotificationContext();
 
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
   const { fetchAll, create, update, remove, list, loading } = useApi<Subject>(
     apiService,
     "/subjects"

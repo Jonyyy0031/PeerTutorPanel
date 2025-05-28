@@ -1,17 +1,14 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { Card } from "../../../shared/components/card";
 import { BookOpen, ClipboardList, Users } from "lucide-react";
-import { ApiService } from "../../../services/api.services";
 import { useApi } from "../../../shared/hooks/useApi";
 import { Tutor } from "../../../shared/models/tutor.types";
 import { Subject } from "../../../shared/models/subject.types";
 import { Log } from "../../../shared/models/logs.types";
+import { useAdminApiService } from "../../../shared/hooks/useAdminAPI";
 
 const HomeStats: React.FC = () => {
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll: fetchTutors, list: tutors } = useApi<Tutor>(
     apiService,

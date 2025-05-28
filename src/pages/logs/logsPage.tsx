@@ -1,14 +1,14 @@
-import React, { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useEffect } from "react";
 import LogsTable from "./components/logsTable";
 import LogsStats from "./components/logsStats";
 import { useApi } from "../../shared/hooks/useApi";
-import { ApiService } from "../../services/api.services";
 import { useNotificationContext } from "../../shared/context/notificationContext";
 import { Log } from "../../shared/models/logs.types";
+import { useAdminApiService } from "../../shared/hooks/useAdminAPI";
 
 const LogsPage: React.FC = () => {
   const { showNotification } = useNotificationContext();
-  const apiServe = useMemo(() => new ApiService("http://localhost:3000/api/admin"), []);
+  const apiServe = useAdminApiService();
   const { fetchAll, create, update, remove, list, loading } = useApi<Log>(apiServe, "/logs");
 
   useEffect(() => {

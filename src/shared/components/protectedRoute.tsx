@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
-import { ApiService } from "../../services/api.services";
 import LoadingSpinner from "./LoadingSpinner";
 import { useNotificationContext } from "../context/notificationContext";
+import { useAdminApiService } from "../hooks/useAdminAPI";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,6 +13,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { showNotification } = useNotificationContext();
   const token = localStorage.getItem("token");
   const notificationShown = useRef(false);
+  const apiService = useAdminApiService();
 
   useEffect(() => {
     const validateToken = async () => {
@@ -29,10 +30,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       }
 
       try {
-        const apiService = new ApiService("http://localhost:3000/api/admin");
         await apiService.getAll("/users");
         setIsValid(true);
       } catch (error) {
+        console.error("Token validation failed:", error);
         localStorage.removeItem("token");
         setIsValid(false);
         if (!notificationShown.current) {

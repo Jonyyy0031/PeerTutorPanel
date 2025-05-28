@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { X } from "lucide-react";
 import { Log } from "../../../../shared/models/logs.types";
 import LoadingSpinner from "../../../../shared/components/LoadingSpinner";

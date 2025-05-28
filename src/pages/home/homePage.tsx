@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import { User } from "../../shared/models/user.types";
 
@@ -6,13 +6,10 @@ import HomeStats from "./components/homeStats";
 import HomeUserTable from "./components/home-user-table";
 
 import { useApi } from "../../shared/hooks/useApi";
-import { ApiService } from "../../services/api.services";
+import { useAdminApiService } from "../../shared/hooks/useAdminAPI";
 
 const HomePage: React.FC = () => {
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll, create, update, remove, list, loading } = useApi<User>(
     apiService,

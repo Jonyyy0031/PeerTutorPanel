@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 import Select, { SingleValue } from "react-select";
 import makeAnimated from "react-select/animated";
@@ -13,8 +13,8 @@ import {
 } from "../../../shared/helpers/validators";
 
 import { useApi } from "../../../shared/hooks/useApi";
-import { ApiService } from "../../../services/api.services";
 import { useForm } from "../../../shared/hooks/useForm";
+import { useAdminApiService } from "../../../shared/hooks/useAdminAPI";
 
 interface HomeUserEditModalProps {
   user: User;
@@ -34,10 +34,7 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
   onEdit,
   isLoading,
 }) => {
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll, list, loading } = useApi<Role>(apiService, "/roles");
 
@@ -57,11 +54,11 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
       !validateNameWithNumbers(value) ? "Nombre inválido" : undefined,
     email: (value: string) =>
       !validateEmail(value) ? "Correo electrónico inválido" : undefined,
-    role_id: (value: number | undefined ) =>
+    role_id: (value: number | undefined) =>
       !value ? "El rol es requerido" : undefined,
     password: (value: string) =>
       !value ? "La contraseña es requerida" : undefined,
-  }
+  };
 
   const { formData, handleChange, errors, isValid } = useForm(
     user,
@@ -82,7 +79,7 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid()) return;
-    const {roleName, ...body} = formData;
+    const { roleName, ...body } = formData;
     onEdit(body);
   };
 
@@ -200,7 +197,6 @@ const HomeUserEditModal: React.FC<HomeUserEditModalProps> = ({
               disabled={isLoading}
               error={errors.password}
             />
-            
           </div>
           <div className="flex justify-end space-x-4 mt-6">
             <button

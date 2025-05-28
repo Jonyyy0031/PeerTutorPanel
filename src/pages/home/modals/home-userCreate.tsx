@@ -13,8 +13,8 @@ import {
   validatePassword,
 } from "../../../shared/helpers/validators";
 import { useApi } from "../../../shared/hooks/useApi";
-import { ApiService } from "../../../services/api.services";
 import { useForm } from "../../../shared/hooks/useForm";
+import { useAdminApiService } from "../../../shared/hooks/useAdminAPI";
 
 interface HomeUserCreateModalProps {
   onCreate: (user: Partial<User>) => Promise<void>;
@@ -32,17 +32,17 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
   onCreate,
   isLoading,
 }) => {
-
   const validationRules = {
     user_name: (value: string) =>
       !validateNameWithNumbers(value) ? "Nombre inválido" : undefined,
     email: (value: string) =>
       !validateEmail(value) ? "Correo electrónico inválido" : undefined,
-    role_id: (value: number) =>
-      !value ? "El rol es requerido" : undefined,
+    role_id: (value: number) => (!value ? "El rol es requerido" : undefined),
     password: (value: string) =>
-      !validatePassword(value) ? "La contraseña debe ser de minimo 8 caracteres, 1 mayuscula y 1 simbolo" : undefined,
-  }
+      !validatePassword(value)
+        ? "La contraseña debe ser de minimo 8 caracteres, 1 mayuscula y 1 simbolo"
+        : undefined,
+  };
 
   const { formData, errors, handleChange, isValid } = useForm(
     {
@@ -54,11 +54,7 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
     validationRules
   );
 
-
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll, list, loading } = useApi<Role>(apiService, "/roles");
 
@@ -80,7 +76,7 @@ const HomeUserCreateModal: React.FC<HomeUserCreateModalProps> = ({
       target: {
         name: "role_id",
         value: option?.value,
-      }
+      },
     });
   };
 

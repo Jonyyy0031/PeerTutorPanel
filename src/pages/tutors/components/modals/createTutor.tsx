@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import Select, { MultiValue } from "react-select";
 import makeAnimated from "react-select/animated";
 import { X } from "lucide-react";
@@ -6,7 +6,6 @@ import LoadingSpinner from "../../../../shared/components/LoadingSpinner";
 
 import { Tutor, TutorData } from "../../../../shared/models/tutor.types";
 import { Subject } from "../../../../shared/models/subject.types";
-import { ApiService } from "../../../../services/api.services";
 import {
   validateDepartment,
   validateEmail,
@@ -15,8 +14,8 @@ import {
 } from "../../../../shared/helpers/validators";
 import { useApi } from "../../../../shared/hooks/useApi";
 import FormField from "../../../../shared/components/formField";
-import { sub } from "date-fns";
 import { useForm } from "../../../../shared/hooks/useForm";
+import { useAdminApiService } from "../../../../shared/hooks/useAdminAPI";
 
 interface CreateTutorModalProps {
   onClose: () => void;
@@ -29,10 +28,7 @@ const CreateTutorModal: React.FC<CreateTutorModalProps> = ({
   onCreate,
   isLoading,
 }) => {
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
   const { fetchAll, list, loading } = useApi<Subject>(apiService, "/subjects");
 
   useEffect(() => {

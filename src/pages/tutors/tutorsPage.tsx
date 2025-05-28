@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 import { Tutor } from "../../shared/models/tutor.types";
@@ -8,20 +8,17 @@ import TutorStats from "./components/tutorStats";
 import TutorTable from "./components/tutorTable";
 
 import { useApi } from "../../shared/hooks/useApi";
-import { ApiService } from "../../services/api.services";
 
 import CreateTutorModal from "./components/modals/createTutor";
 import { useNotificationContext } from "../../shared/context/notificationContext";
+import { useAdminApiService } from "../../shared/hooks/useAdminAPI";
 
 const TutorsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { showNotification } = useNotificationContext();
 
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll, create, update, remove, list, loading } = useApi<Tutor>(
     apiService,

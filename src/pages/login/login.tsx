@@ -8,15 +8,13 @@ import { validateEmail } from "../../shared/helpers/validators";
 import LoadingSpinner from "../../shared/components/LoadingSpinner";
 import { useNotificationContext } from "../../shared/context/notificationContext";
 import { useForm } from "../../shared/hooks/useForm";
+import { usePublicAPI } from "../../shared/hooks/usePublicAPI";
 
 const login: React.FC = () => {
   const { showNotification } = useNotificationContext();
   const navigate = useNavigate();
 
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/public"),
-    []
-  );
+  const apiService = usePublicAPI();
   const { login, loading } = useAuth(apiService, "/login");
 
 

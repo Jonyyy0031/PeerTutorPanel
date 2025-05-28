@@ -13,11 +13,11 @@ import {
   validateName,
   validateDepartment,
 } from "../../../../shared/helpers/validators";
-import { ApiService } from "../../../../services/api.services";
 import { useApi } from "../../../../shared/hooks/useApi";
 import { Subject } from "../../../../shared/models/subject.types";
 import FormField from "../../../../shared/components/formField";
 import { useForm } from "../../../../shared/hooks/useForm";
+import { useAdminApiService } from "../../../../shared/hooks/useAdminAPI";
 
 interface EditTutorModalProps {
   tutor: Tutor;
@@ -61,10 +61,7 @@ const EditTutorModal: React.FC<EditTutorModalProps> = ({
     validationRules
   );
 
-  const apiService = useMemo(
-    () => new ApiService("http://localhost:3000/api/admin"),
-    []
-  );
+  const apiService = useAdminApiService();
 
   const { fetchAll, list, loading } = useApi<Subject>(apiService, "/subjects");
 
